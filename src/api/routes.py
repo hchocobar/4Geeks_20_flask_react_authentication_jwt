@@ -18,27 +18,30 @@ api = Blueprint('api', __name__)
 def login():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    if email != "test@test.com" or password != "test":
-        return jsonify({"msg": "Bad username or password"}), 401
-    access_token = create_access_token(identity=email)  # JWT_extended
-    response_body = {"email": email,
-                     "access_token": access_token}
-    return response_body, 200
+    user = User.query.filter_by(email=email, password=password, is_active = True).first()
+    if user:
+        access_token = create_access_token(identity=email)  # JWT_extended
+        response_body = {"email": email,
+                         "access_token": access_token}
+        return response_body, 200
+    else:
+        response_body = {"msg": "Bad username, password or user inactive"}
+        return response_body, 401
 
 
 # Protect a route with jwt_required, which will kick out requests without a valid JWT present.
 @api.route("/private", methods=["GET"])
 @jwt_required()
-def protected():
+def private():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
-    print("current user:" , current_user)
-    response_body = {"message": "login ok",
+    response_body = {"message": "you can access to private page",
                      "logged_in_as": current_user}
     return response_body, 200
 
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
-    response_body = {"message": "Hello! I'm a message that came from the backend"}
+    response_body = {"message": "Hello! I'm a message that came from the backend",
+                     "logged_in_as": "this page is public, you don´t need login"}
     return jsonify(response_body), 200
