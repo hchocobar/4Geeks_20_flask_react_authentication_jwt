@@ -25,7 +25,7 @@ def login():
                          "access_token": access_token}
         return response_body, 200
     else:
-        response_body = {"msg": "Bad username, password or user inactive"}
+        response_body = {"message": "Bad username, password or user inactive"}
         return response_body, 401
 
 

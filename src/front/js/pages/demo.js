@@ -6,6 +6,27 @@ import { Context } from "../store/appContext";
 export const Demo = () => {
 	const { store, actions } = useContext(Context);
 
+	useEffect(() => {
+		
+		var myHeaders = new Headers();
+		myHeaders.append("Authorization", "Bearer " + localStorage.getItem("token"));
+
+		var requestOptions = {
+			method: 'GET',
+			headers: myHeaders,
+			redirect: 'follow'
+		};
+
+		fetch("https://3001-hchocobar-4geeks20flask-e39h827pdvt.ws-us83.gitpod.io/private", requestOptions)
+		.then(response => response.json())
+		.then(result => console.log(result))
+		.catch(error => console.log('error', error));
+
+		return () => {
+			
+		}
+	}, [])
+
 	return (
 		<div className="container">
 			<ul className="list-group">
